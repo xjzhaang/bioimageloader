@@ -5,17 +5,18 @@ from typing import Dict, List, Optional, Sequence, Union
 import albumentations
 import cv2
 import numpy as np
-import tifffile
+from PIL import Image
 
 
 from ..base import MaskDataset
 from ..types import BundledPath
 from ..utils import bundle_list, stack_channels, stack_channels_to_rgb
 
-class BBBC009(MaskDataset):
-    """Human red blood cells
+class BBBC030(MaskDataset):
+    """Chinese Hamster Ovary Cells
     
-    This image set consists of five differential interference contrast (DIC) images of red bood cells. 
+    The image set consists of 60 Differential Interference Contrast (DIC) images of Chinese Hamster Ovary (CHO) cells. 
+    The images are taken on an Olympus Cell-R microscope with a 20x lens at the time when the cell initiated their attachment to the bottom of the dish. 
     
     Parameters
     ----------
@@ -39,9 +40,14 @@ class BBBC009(MaskDataset):
     --------
     MaskDataset : Super class
     DatasetInterface : Interface
+    
+    References
+    ----------
+    .. [1] https://bbbc.broadinstitute.org/BBBC030
+    
     """
     # Set acronym
-    acronym = 'BBBC009'
+    acronym = 'BBBC030'
 
     def __init__(
         self,
@@ -64,27 +70,27 @@ class BBBC009(MaskDataset):
         # specific to this one here
 
     def get_image(self, p: Path) -> np.ndarray:
-        img = tifffile.imread(p)
-        img = cv2.cvtColor(img, cv2.COLOR_GRAY2RGB)
-        return img
+        img = Image.open(p)
+        
+        return np.asarray(img)
 
     def get_mask(self, p: Path) -> np.ndarray:
-        mask = tifffile.imread(p)
+        mask = Image.open(p).convert('1')
         # dtype=bool originally and bool is not well handled by albumentations
-        return 255 * mask.astype(np.uint8)
+        return  255 * np.asarray(mask)
 
     @cached_property
     def file_list(self) -> List[Path]:
         # Important to decorate with `cached_property` in general
         root_dir = self.root_dir
-        parent = 'human_rbc_dic_images'
-        file_list = sorted(root_dir.glob(f'{parent}/*.tif'))
+        parent = 'images'
+        file_list = sorted(root_dir.glob(f'{parent}/*.png'))
         return file_list
 
     @cached_property
     def anno_dict(self) -> List[Path]:
         # Important to decorate with `cached_property` in general
         root_dir = self.root_dir
-        parent = 'human_rbc_dic_outlines'
-        file_list = sorted(root_dir.glob(f'{parent}/*.tif'))
+        parent = 'ground_truth'
+        file_list = sorted(root_dir.glob(f'{parent}/*.png'))
         return file_list
