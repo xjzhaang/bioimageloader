@@ -184,6 +184,7 @@ class BBBC020(MaskDataset):
     @cached_property
     def file_list(self) -> List[Path]:
         root_dir = self.root_dir
+        print(type(root_dir))
         parent = 'BBBC020_v1_images'
         if len(ch := self.image_ch) == 1:
             if ch[0] == 'cells':
@@ -235,7 +236,7 @@ class BBBC020(MaskDataset):
                 if anno_list_cells and anno_list_nuclei:
                     # 'cells' (ch=Green) first then 'nuclei' (ch=Blue)
                     anno_list = [anno_list_cells, anno_list_nuclei]
-                else:
+                else: 
                     anno_list = []
             else:
                 raise ValueError("Set `anno_ch` in ('nuclei', 'cells')")

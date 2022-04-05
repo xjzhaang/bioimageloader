@@ -1,0 +1,6 @@
+BBBC009:
+  root_dir: ./BBBC009
+  output: both
+  num_samples: null
+  grayscale: false
+  grayscale_mode: cv2
