@@ -31,7 +31,7 @@ S_BSST265:
   output: both
   num_samples: null
 BBBC006:
-  root_dir: ../Data/bbbc/006/
+  root_dir: ../Data/bbbc/006
   output: both
   num_samples: null
   grayscale: false

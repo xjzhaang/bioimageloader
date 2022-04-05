@@ -1,5 +1,5 @@
 BBBC009:
-  root_dir: ./BBBC009
+  root_dir: ./Data/bbbc/009
   output: both
   num_samples: null
   grayscale: false

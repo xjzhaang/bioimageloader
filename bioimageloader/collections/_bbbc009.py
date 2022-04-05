@@ -13,7 +13,10 @@ from ..types import BundledPath
 from ..utils import bundle_list, stack_channels, stack_channels_to_rgb
 
 class BBBC009(MaskDataset):
-    """Template for MaskDataset
+    """Human red blood cells
+    
+    This image set consists of five differential interference contrast (DIC) images of red bood cells. 
+    
     Parameters
     ----------
     root_dir : str
@@ -36,6 +39,11 @@ class BBBC009(MaskDataset):
     --------
     MaskDataset : Super class
     DatasetInterface : Interface
+    
+    References
+    ----------
+    .. [1] https://bbbc.broadinstitute.org/BBBC009
+    
     """
     # Set acronym
     acronym = 'BBBC009'
@@ -73,7 +81,6 @@ class BBBC009(MaskDataset):
     @cached_property
     def file_list(self) -> List[Path]:
         # Important to decorate with `cached_property` in general
-        #file_list: Union[List[Path], List[List[Path]]]
         root_dir = self.root_dir
         parent = 'human_rbc_dic_images'
         file_list = sorted(root_dir.glob(f'{parent}/*.tif'))
@@ -82,7 +89,6 @@ class BBBC009(MaskDataset):
     @cached_property
     def anno_dict(self) -> List[Path]:
         # Important to decorate with `cached_property` in general
-        #file_list: Union[List[Path], List[List[Path]]]
         root_dir = self.root_dir
         parent = 'human_rbc_dic_outlines'
         file_list = sorted(root_dir.glob(f'{parent}/*.tif'))
