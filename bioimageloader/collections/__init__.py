@@ -16,6 +16,7 @@ from ._bbbc039 import BBBC039
 from ._cellpose import Cellpose
 from ._bbbc009 import BBBC009
 from ._bbbc030 import BBBC030
+from ._bbbc004 import BBBC004
 #     semantic (fg/bg)
 from ._tnbc import TNBC
 from ._bbbc008 import BBBC008
@@ -43,6 +44,7 @@ from ._bbbc021 import BBBC021  # huge dataset 132,000 images
 # Keep this list sorted
 __all__ = [
     'BBBC002',
+    'BBBC004',
     'BBBC006',
     'BBBC007',
     'BBBC008',

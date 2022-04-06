@@ -6,16 +6,27 @@ import albumentations
 import cv2
 import numpy as np
 import tifffile
+from PIL import Image
 
 
 from ..base import MaskDataset
 from ..types import BundledPath
 from ..utils import bundle_list, stack_channels, stack_channels_to_rgb
 
-class BBBC009(MaskDataset):
-    """Human red blood cells
+class BBBC004(MaskDataset):
+    """Synthetic cells
     
-    This image set consists of five differential interference contrast (DIC) images of red bood cells. 
+     Biological application
+
+    One of the principal challenges in counting or segmenting nuclei is dealing with clustered nuclei.
+    To help assess algorithms' performance in this regard, this synthetic image set consists of five 
+    subsets with increasing degree of clustering.
+    
+    Images
+
+    Five subsets of 20 images each are provided. Each image contains 300 objects, but the objects overlap 
+    and cluster with different probabilities in the five subsets. The images were generated with the SIMCEP 
+    simulating platform for fluorescent cell population images (Lehmussola et al., IEEE T. Med. Imaging, 2007 and Lehmussola et al., P. IEEE, 2008). 
     
     Parameters
     ----------
@@ -38,7 +49,7 @@ class BBBC009(MaskDataset):
         
     References
     ----------
-    .. [1] https://bbbc.broadinstitute.org/BBBC009
+    .. [1] https://bbbc.broadinstitute.org/BBBC004
     
     
     See Also
@@ -47,7 +58,7 @@ class BBBC009(MaskDataset):
     DatasetInterface : Interface
     """
     # Set acronym
-    acronym = 'BBBC009'
+    acronym = 'BBBC004'
 
     def __init__(
         self,
@@ -71,19 +82,20 @@ class BBBC009(MaskDataset):
 
     def get_image(self, p: Path) -> np.ndarray:
         img = tifffile.imread(p)
-        img = cv2.cvtColor(img, cv2.COLOR_GRAY2RGB)
+        #img = cv2.cvtColor(img, cv2.GRAYSCALE)
         return img
 
     def get_mask(self, p: Path) -> np.ndarray:
         mask = tifffile.imread(p)
-        # dtype=bool originally and bool is not well handled by albumentations
-        return 255 * mask.astype(np.uint8)
+        mask = cv2.cvtColor(mask, cv2.COLOR_RGB2GRAY)
+        th, mask = cv2.threshold(mask, 0, 255, cv2.THRESH_BINARY)
+        return mask
 
     @cached_property
     def file_list(self) -> List[Path]:
         # Important to decorate with `cached_property` in general
         root_dir = self.root_dir
-        parent = 'human_rbc_dic_images'
+        parent = '*_images'
         file_list = sorted(root_dir.glob(f'{parent}/*.tif'))
         return file_list
 
@@ -91,6 +103,6 @@ class BBBC009(MaskDataset):
     def anno_dict(self) -> List[Path]:
         # Important to decorate with `cached_property` in general
         root_dir = self.root_dir
-        parent = 'human_rbc_dic_outlines'
+        parent = '*_foreground'
         file_list = sorted(root_dir.glob(f'{parent}/*.tif'))
         return file_list

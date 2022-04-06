@@ -1,8 +1,7 @@
-BBBC020:
-  root_dir: ./Data/bbbc/020
+BBBC004:
+  root_dir: ./Data/bbbc/004
   output: both
   num_samples: null
   grayscale: false
   grayscale_mode: equal
-  anno_ch: [nuclei, ]
-  drop_missing_pairs: true
+  

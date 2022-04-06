@@ -15,8 +15,10 @@ from ..utils import bundle_list, stack_channels, stack_channels_to_rgb
 class BBBC030(MaskDataset):
     """Chinese Hamster Ovary Cells
     
-    The image set consists of 60 Differential Interference Contrast (DIC) images of Chinese Hamster Ovary (CHO) cells. 
-    The images are taken on an Olympus Cell-R microscope with a 20x lens at the time when the cell initiated their attachment to the bottom of the dish. 
+    The image set consists of 60 Differential Interference Contrast (DIC) 
+    images of Chinese Hamster Ovary (CHO) cells. The images are taken on an 
+    Olympus Cell-R microscope with a 20x lens at the time when the cell initiated
+    their attachment to the bottom of the dish. 
     
     Parameters
     ----------
@@ -36,14 +38,18 @@ class BBBC030(MaskDataset):
         How to convert to grayscale. If set to 'cv2', it follows opencv
         implementation. Else if set to 'equal', it sums up values along channel
         axis, then divides it by the number of expected channels.
+        
+    References
+    ----------
+    .. [1] https://bbbc.broadinstitute.org/BBBC030
+    
+    
     See Also
     --------
     MaskDataset : Super class
     DatasetInterface : Interface
     
-    References
-    ----------
-    .. [1] https://bbbc.broadinstitute.org/BBBC030
+   
     
     """
     # Set acronym
@@ -77,7 +83,7 @@ class BBBC030(MaskDataset):
     def get_mask(self, p: Path) -> np.ndarray:
         mask = Image.open(p).convert('1')
         # dtype=bool originally and bool is not well handled by albumentations
-        return  255 * np.asarray(mask)
+        return 255 * np.asarray(mask)
 
     @cached_property
     def file_list(self) -> List[Path]:
