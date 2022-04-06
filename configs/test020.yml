@@ -1,7 +1,8 @@
-BBBC004:
-  root_dir: ./Data/bbbc/004
+LIVECell:
+  root_dir: ./Data/LIVECell
   output: both
   num_samples: null
   grayscale: false
   grayscale_mode: equal
+  training: false
   
