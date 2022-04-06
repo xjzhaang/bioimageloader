@@ -88,7 +88,7 @@ class BBBC004(MaskDataset):
     def get_mask(self, p: Path) -> np.ndarray:
         mask = tifffile.imread(p)
         mask = cv2.cvtColor(mask, cv2.COLOR_RGB2GRAY)
-        th, mask = cv2.threshold(mask, 0, 1, cv2.THRESH_BINARY)
+        th, mask = cv2.threshold(mask, 0, 255, cv2.THRESH_BINARY)
         return mask
 
     @cached_property

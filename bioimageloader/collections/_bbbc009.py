@@ -77,7 +77,7 @@ class BBBC009(MaskDataset):
     def get_mask(self, p: Path) -> np.ndarray:
         mask = tifffile.imread(p)
         # dtype=bool originally and bool is not well handled by albumentations
-        return mask.astype(np.uint8)
+        return 255 * mask.astype(np.uint8)
 
     @cached_property
     def file_list(self) -> List[Path]:
