@@ -90,6 +90,7 @@ class LIVECell(MaskDataset):
     
     def get_image(self, p: Path) -> np.ndarray:
         img = tifffile.imread(p)
+        img = cv2.cvtColor(img, cv2.COLOR_GRAY2RGB)
         return img
 
     def get_mask(self, p: Path) -> np.ndarray:
