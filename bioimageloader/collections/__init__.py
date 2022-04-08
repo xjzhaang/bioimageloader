@@ -17,6 +17,8 @@ from ._cellpose import Cellpose
 from ._bbbc009 import BBBC009
 from ._bbbc030 import BBBC030
 from ._bbbc004 import BBBC004
+from ._livecell import LIVECell
+from ._evican import EVICAN
 #     semantic (fg/bg)
 from ._tnbc import TNBC
 from ._bbbc008 import BBBC008
@@ -38,7 +40,7 @@ from ._bbbc016 import BBBC016
 from ._bbbc026 import BBBC026
 from ._bbbc041 import BBBC041
 from ._bbbc021 import BBBC021  # huge dataset 132,000 images
-from ._livecell import LIVECell
+
 
 
 
@@ -65,6 +67,7 @@ __all__ = [
     'ComputationalPathology',
     'DSB2018',
     'DigitalPathology',
+    'EVICAN',
     'FRUNet',
     'LIVECell',
     'MurphyLab',
