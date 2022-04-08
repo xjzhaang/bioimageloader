@@ -102,12 +102,14 @@ class LIVECell(MaskDataset):
                 annIds = self.coco_tr.getAnnIds(imgIds=anno[0]["id"], iscrowd=None)
                 anns = self.coco_tr.loadAnns(annIds)
                 mask = self.coco_tr.annToMask(anns[0])
+                mask = mask.astype(np.uint32)
                 for i in range(len(anns)):
                     mask |= self.coco_tr.annToMask(anns[i]) * i
             except:
                 annIds = self.coco_val.getAnnIds(imgIds=anno[0]["id"], iscrowd=None)
                 anns = self.coco_val.loadAnns(annIds)
                 mask = self.coco_val.annToMask(anns[0])
+                mask = mask.astype(np.uint32)
                 for i in range(len(anns)):
                     mask |= self.coco_val.annToMask(anns[i]) * i
         else:
@@ -115,6 +117,7 @@ class LIVECell(MaskDataset):
             annIds = self.coco_te.getAnnIds(imgIds=anno[0]["id"], iscrowd=None)
             anns = self.coco_te.loadAnns(annIds)
             mask = self.coco_te.annToMask(anns[0])
+            mask = mask.astype(np.uint32)
             for i in range(len(anns)):
                 mask |= self.coco_te.annToMask(anns[i]) * i
         return mask

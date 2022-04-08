@@ -1,0 +1,46 @@
+LIVECell:
+  root_dir: ./Data/LIVECell
+  output: both
+  num_samples: null
+  grayscale: false
+  grayscale_mode: equal
+  training: false
+  
+EVICAN:
+  root_dir: ./Data/EVICAN
+  output: both
+  num_samples: null
+  grayscale: false
+  grayscale_mode: equal
+  training: false
+  
+DSB2018:
+  root_dir: ./Data/data-science-bowl-2018
+  output: both
+  num_samples: null
+  grayscale: false
+  grayscale_mode: cv2
+  training: true
+  
+BBBC009:
+  root_dir: ./Data/bbbc/009
+  output: both
+  num_samples: null
+  grayscale: false
+  grayscale_mode: cv2
+  
+BBBC030:
+  root_dir: ./Data/bbbc/030
+  output: both
+  num_samples: null
+  grayscale: false
+  grayscale_mode: cv2
+
+BBBC004:
+  root_dir: ./Data/bbbc/004
+  output: both
+  num_samples: null
+  grayscale: false
+  grayscale_mode: cv2
+
+
