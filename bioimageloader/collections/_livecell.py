@@ -103,20 +103,20 @@ class LIVECell(MaskDataset):
                 anns = self.coco_tr.loadAnns(annIds)
                 mask = self.coco_tr.annToMask(anns[0])
                 for i in range(len(anns)):
-                    mask += self.coco_tr.annToMask(anns[i])
+                    mask |= self.coco_tr.annToMask(anns[i]) * i
             except:
                 annIds = self.coco_val.getAnnIds(imgIds=anno[0]["id"], iscrowd=None)
                 anns = self.coco_val.loadAnns(annIds)
                 mask = self.coco_val.annToMask(anns[0])
                 for i in range(len(anns)):
-                    mask += self.coco_val.annToMask(anns[i])
+                    mask |= self.coco_val.annToMask(anns[i]) * i
         else:
             anno = list(filter(lambda img: img['file_name'] == str(pathlib.PurePath(p)).split('/')[-1], self.anno_dictionary))       
             annIds = self.coco_te.getAnnIds(imgIds=anno[0]["id"], iscrowd=None)
             anns = self.coco_te.loadAnns(annIds)
             mask = self.coco_te.annToMask(anns[0])
             for i in range(len(anns)):
-                mask += self.coco_te.annToMask(anns[i])
+                mask |= self.coco_te.annToMask(anns[i]) * i
         return mask
 
     @cached_property
