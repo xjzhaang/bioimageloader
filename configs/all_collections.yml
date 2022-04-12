@@ -3,7 +3,7 @@
 # Argument `transforms` does not belong in config. You should pass it to
 # `Config.load_datasets()` method.
 DSB2018:
-  root_dir: ../Data/DSB2018
+  root_dir: ../Data/data-science-bowl-2018
   output: both
   num_samples: null
   grayscale: false
@@ -141,7 +141,7 @@ BBBC026:
   root_dir: ../Data/bbbc/026
   num_samples: null
 BBBC041:
-  root_dir: ../Data/bbbc/041/malaria
+  root_dir: ../Data/bbbc/041
   num_samples: null
   grayscale: false
   grayscale_mode: cv2
@@ -152,3 +152,34 @@ BBBC021:
   grayscale: false
   grayscale_mode: equal
   image_ch: [DNA, actin, tublin]
+BBBC004:
+  root_dir: ../Data/bbbc/004
+  num_samples: null
+  grayscale: false
+  grayscale_mode: equal
+BBBC009:
+  root_dir: ../Data/bbbc/009
+  num_samples: null
+  grayscale: false
+  grayscale_mode: equal
+BBBC030:
+  root_dir: ../Data/bbbc/030
+  num_samples: null
+  grayscale: false
+  grayscale_mode: equal
+LIVECell:
+  root_dir: ../Data/LIVECell
+  output: both
+  num_samples: null
+  grayscale: false
+  grayscale_mode: equal
+  training: true
+EVICAN:
+  root_dir: ../Data/EVICAN
+  output: both
+  num_samples: null
+  grayscale: false
+  grayscale_mode: equal
+  training: true
+  
+

@@ -8,6 +8,8 @@ import cv2
 import numpy as np
 import tifffile
 from pycocotools import coco
+import os
+from tqdm import tqdm
 
 from ..base import MaskDataset
 from ..types import BundledPath
@@ -15,7 +17,7 @@ from ..utils import imread_asarray, rle_decoding_inseg, read_csv, ordered_unique
 
 class LIVECell(MaskDataset):
     """LIVECEll
-    A large-scale dataset for label-free live cell segmentation
+    A large-scale dataset for label-free live cell segmentation [1] [2]
 
     Parameters
     ----------
@@ -64,6 +66,7 @@ class LIVECell(MaskDataset):
         grayscale_mode: Union[str, Sequence[float]] = 'cv2',
         # specific to this dataset
         training: bool = True,
+        save_tif: bool = True,
         **kwargs
     ):
         self._root_dir = root_dir
@@ -74,19 +77,56 @@ class LIVECell(MaskDataset):
         self._grayscale_mode = grayscale_mode
         # specific to this one here
         self.training = training
+        self.save_tif = save_tif
         
         #Read training/val or test annotations from json
-        if self.training:
+        #Save the masks as tif files if save_tif = True
+        if not os.path.exists(root_dir + "/masks"):
+            os.makedirs(root_dir + "/masks")
+        if not os.path.exists(root_dir + "/masks/livecell_train_val_masks"):
+            os.makedirs(root_dir + "/masks/livecell_train_val_masks")
+        if not os.path.exists(root_dir + "/masks/livecell_test_masks"):
+            os.makedirs(root_dir + "/masks/livecell_test_masks")
+            
+        if self.training and self.save_tif:
             self.coco_tr = coco.COCO(root_dir + "/livecell_coco_train.json")
             self.coco_val = coco.COCO(root_dir + "/livecell_coco_val.json")
             img_tr = self.coco_tr.loadImgs(self.coco_tr.getImgIds())
             img_va = self.coco_val.loadImgs(self.coco_val.getImgIds())
             self.anno_dictionary = img_tr + img_va
-        else:
+            
+            print("making instances masks and saving as tif files")
+            for img in tqdm(self.anno_dictionary):
+                try:
+                    annIds = self.coco_tr.getAnnIds(imgIds=img["id"], iscrowd=None)
+                    anns = self.coco_tr.loadAnns(annIds)
+                    mask = self.coco_tr.annToMask(anns[0])
+                    mask = mask.astype(np.int32)
+                    for i in range(len(anns)):
+                        mask |= self.coco_tr.annToMask(anns[i]) * i
+                except:
+                    annIds = self.coco_val.getAnnIds(imgIds=img["id"], iscrowd=None)
+                    anns = self.coco_val.loadAnns(annIds)
+                    mask = self.coco_val.annToMask(anns[0])
+                    mask = mask.astype(np.int32)
+                    for i in range(len(anns)):
+                        mask |= self.coco_val.annToMask(anns[i]) * i
+                tifffile.imsave(root_dir + "/masks/livecell_train_val_masks/" + img["file_name"], mask)
+            print("Done!")     
+        if not self.training and self.save_tif:
+            print("making instances masks and saving as tif files")
             self.coco_te = coco.COCO(root_dir + "/livecell_coco_test.json")
             img_te = self.coco_te.loadImgs(self.coco_te.getImgIds())
-            self.anno_dictionary = img_te 
-            
+            self.anno_dictionary = img_te
+            for img in tqdm(self.anno_dictionary): 
+                annIds = self.coco_te.getAnnIds(imgIds=img["id"], iscrowd=None)
+                anns = self.coco_te.loadAnns(annIds)
+                mask = self.coco_te.annToMask(anns[0])
+                mask = mask.astype(np.int32)
+                for i in range(len(anns)):
+                    mask |= self.coco_te.annToMask(anns[i]) * i
+                tifffile.imsave(root_dir + "/masks/livecell_test_masks/" + img["file_name"], mask)
+            print("Done!")
     
     def get_image(self, p: Path) -> np.ndarray:
         img = tifffile.imread(p)
@@ -94,33 +134,8 @@ class LIVECell(MaskDataset):
         return img
 
     def get_mask(self, p: Path) -> np.ndarray:
-        #find the annotation id associated with the file name
-        #then get the mask
-        if self.training:
-            anno = list(filter(lambda img: img['file_name'] == str(pathlib.PurePath(p)).split('/')[-1], self.anno_dictionary))
-            try:
-                annIds = self.coco_tr.getAnnIds(imgIds=anno[0]["id"], iscrowd=None)
-                anns = self.coco_tr.loadAnns(annIds)
-                mask = self.coco_tr.annToMask(anns[0])
-                mask = mask.astype(np.uint32)
-                for i in range(len(anns)):
-                    mask |= self.coco_tr.annToMask(anns[i]) * i
-            except:
-                annIds = self.coco_val.getAnnIds(imgIds=anno[0]["id"], iscrowd=None)
-                anns = self.coco_val.loadAnns(annIds)
-                mask = self.coco_val.annToMask(anns[0])
-                mask = mask.astype(np.uint32)
-                for i in range(len(anns)):
-                    mask |= self.coco_val.annToMask(anns[i]) * i
-        else:
-            anno = list(filter(lambda img: img['file_name'] == str(pathlib.PurePath(p)).split('/')[-1], self.anno_dictionary))       
-            annIds = self.coco_te.getAnnIds(imgIds=anno[0]["id"], iscrowd=None)
-            anns = self.coco_te.loadAnns(annIds)
-            mask = self.coco_te.annToMask(anns[0])
-            mask = mask.astype(np.uint32)
-            for i in range(len(anns)):
-                mask |= self.coco_te.annToMask(anns[i]) * i
-        return mask
+        mask = tifffile.imread(p)
+        return mask    
 
     @cached_property
     def file_list(self) -> List[Path]:
@@ -132,7 +147,7 @@ class LIVECell(MaskDataset):
     @cached_property
     def anno_dict(self) -> List[Path]:
         root_dir = self.root_dir
-        parent = 'images/livecell_train_val_images' if self.training else 'images/livecell_test_images'
+        parent = 'masks/livecell_train_val_masks' if self.training else 'masks/livecell_test_masks'
         return sorted(root_dir.glob(f'{parent}/*.tif'))
        
             
