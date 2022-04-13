@@ -1,7 +1,6 @@
 from functools import cached_property
 from pathlib import Path
-import pathlib
-from typing import Dict, List, Optional, Sequence, Union, Any
+from typing import List, Optional
 
 import albumentations
 import cv2
@@ -12,8 +11,6 @@ import os
 from tqdm import tqdm
 
 from ..base import MaskDataset
-from ..types import BundledPath
-from ..utils import imread_asarray, rle_decoding_inseg, read_csv, ordered_unique
 
 class LIVECell(MaskDataset):
     """LIVECEll
@@ -31,14 +28,10 @@ class LIVECell(MaskDataset):
     num_samples : int, optional
         Useful when ``transforms`` is set. Define the total length of the
         dataset. If it is set, it overwrites ``__len__``.
-    grayscale : bool, default: False
-        Convert images to grayscale
-    grayscale_mode : {'cv2', 'equal', Sequence[float]}, default: 'cv2'
-        How to convert to grayscale. If set to 'cv2', it follows opencv
-        implementation. Else if set to 'equal', it sums up values along channel
-        axis, then divides it by the number of expected channels.
     training : bool, default: True
         Load training set if True, else load testing one
+    save_tif : bool, default: True
+        Save COCO annotations as tif mask images in a new ./root_dir/masks directory. 
 
     References
     ----------
@@ -62,8 +55,6 @@ class LIVECell(MaskDataset):
         output: str = 'both',
         transforms: Optional[albumentations.Compose] = None,
         num_samples: Optional[int] = None,
-        grayscale: bool = False,
-        grayscale_mode: Union[str, Sequence[float]] = 'cv2',
         # specific to this dataset
         training: bool = True,
         save_tif: bool = True,
@@ -73,14 +64,12 @@ class LIVECell(MaskDataset):
         self._output = output
         self._transforms = transforms
         self._num_samples = num_samples
-        self._grayscale = grayscale
-        self._grayscale_mode = grayscale_mode
         # specific to this one here
         self.training = training
         self.save_tif = save_tif
         
-        #Read training/val or test annotations from json
-        #Save the masks as tif files if save_tif = True
+        # Read training/val or test annotations from json
+        # Save the masks as tif files if save_tif = True
         if not os.path.exists(root_dir + "/masks"):
             os.makedirs(root_dir + "/masks")
         if not os.path.exists(root_dir + "/masks/livecell_train_val_masks"):
@@ -112,7 +101,8 @@ class LIVECell(MaskDataset):
                     for i in range(len(anns)):
                         mask |= self.coco_val.annToMask(anns[i]) * i
                 tifffile.imsave(root_dir + "/masks/livecell_train_val_masks/" + img["file_name"], mask)
-            print("Done!")     
+            print("Done!")
+
         if not self.training and self.save_tif:
             print("making instances masks and saving as tif files")
             self.coco_te = coco.COCO(root_dir + "/livecell_coco_test.json")
@@ -127,7 +117,7 @@ class LIVECell(MaskDataset):
                     mask |= self.coco_te.annToMask(anns[i]) * i
                 tifffile.imsave(root_dir + "/masks/livecell_test_masks/" + img["file_name"], mask)
             print("Done!")
-    
+
     def get_image(self, p: Path) -> np.ndarray:
         img = tifffile.imread(p)
         img = cv2.cvtColor(img, cv2.COLOR_GRAY2RGB)
@@ -135,7 +125,7 @@ class LIVECell(MaskDataset):
 
     def get_mask(self, p: Path) -> np.ndarray:
         mask = tifffile.imread(p)
-        return mask    
+        return mask 
 
     @cached_property
     def file_list(self) -> List[Path]:
@@ -149,6 +139,3 @@ class LIVECell(MaskDataset):
         root_dir = self.root_dir
         parent = 'masks/livecell_train_val_masks' if self.training else 'masks/livecell_test_masks'
         return sorted(root_dir.glob(f'{parent}/*.tif'))
-       
-            
-            

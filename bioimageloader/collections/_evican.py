@@ -3,7 +3,6 @@ from pathlib import Path
 from typing import Dict, List, Optional, Sequence, Union
 
 import albumentations
-import cv2
 import numpy as np
 from PIL import Image
 import os, glob
@@ -35,7 +34,11 @@ class EVICAN(MaskDataset):
         How to convert to grayscale. If set to 'cv2', it follows opencv
         implementation. Else if set to 'equal', it sums up values along channel
         axis, then divides it by the number of expected channels.
-        
+    training : bool, default: True
+        Load training set if True, else load testing one
+    anno_ch : {'cell', 'nuclei'}, default: 'cell'
+        Specify which annotation mask to use
+    
     References
     ----------
     .. [1] https://academic.oup.com/bioinformatics/article/36/12/3863/5814923
@@ -82,8 +85,6 @@ class EVICAN(MaskDataset):
 
     def get_image(self, p: Path) -> np.ndarray:
         img = Image.open(p)
-        #img = cv2.cvtColor(img, cv2.COLOR_GRAY2RGB)
-        #img = img.convert(mode='RGB')
         return np.asarray(img)
 
     def get_mask(self, p: Path) -> np.ndarray:
@@ -122,5 +123,4 @@ class EVICAN(MaskDataset):
             else:
                 parent = 'Masks/EVICAN_val_masks'
                 file_list = sorted(root_dir.glob(f'{parent}/Nuclei/*.jpg'))
-            
         return file_list

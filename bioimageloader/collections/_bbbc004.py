@@ -1,22 +1,19 @@
 from functools import cached_property
 from pathlib import Path
-from typing import Dict, List, Optional, Sequence, Union
+from typing import List, Optional, Sequence, Union
 
 import albumentations
 import cv2
 import numpy as np
 import tifffile
-from PIL import Image
 
 
 from ..base import MaskDataset
-from ..types import BundledPath
-from ..utils import bundle_list, stack_channels, stack_channels_to_rgb
 
 class BBBC004(MaskDataset):
     """Synthetic cells
     
-     Biological application
+    Biological application
 
     One of the principal challenges in counting or segmenting nuclei is dealing with clustered nuclei.
     To help assess algorithms' performance in this regard, this synthetic image set consists of five 
@@ -67,8 +64,6 @@ class BBBC004(MaskDataset):
         output: str = 'both',
         transforms: Optional[albumentations.Compose] = None,
         num_samples: Optional[int] = None,
-        grayscale: bool = False,  # optional
-        grayscale_mode: Union[str, Sequence[float]] = 'cv2',  # optional
         # specific to this dataset
         **kwargs
     ):
@@ -76,8 +71,6 @@ class BBBC004(MaskDataset):
         self._output = output
         self._transforms = transforms
         self._num_samples = num_samples
-        self._grayscale = grayscale   # optional
-        self._grayscale_mode = grayscale_mode  # optional
         # specific to this one here
 
     def get_image(self, p: Path) -> np.ndarray:

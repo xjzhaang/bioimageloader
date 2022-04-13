@@ -18,10 +18,10 @@ from ._bbbc009 import BBBC009
 from ._bbbc030 import BBBC030
 from ._bbbc004 import BBBC004
 from ._livecell import LIVECell
-from ._evican import EVICAN
 #     semantic (fg/bg)
 from ._tnbc import TNBC
 from ._bbbc008 import BBBC008
+from ._evican import EVICAN
 #     semantic (boundary, outline)
 from ._murphylab import MurphyLab
 from ._bbbc007 import BBBC007

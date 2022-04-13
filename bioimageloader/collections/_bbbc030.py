@@ -1,16 +1,13 @@
 from functools import cached_property
 from pathlib import Path
-from typing import Dict, List, Optional, Sequence, Union
+from typing import List, Optional, Sequence, Union
 
 import albumentations
-import cv2
 import numpy as np
 from PIL import Image
 
 
 from ..base import MaskDataset
-from ..types import BundledPath
-from ..utils import bundle_list, stack_channels, stack_channels_to_rgb
 
 class BBBC030(MaskDataset):
     """Chinese Hamster Ovary Cells
@@ -77,7 +74,6 @@ class BBBC030(MaskDataset):
 
     def get_image(self, p: Path) -> np.ndarray:
         img = Image.open(p)
-        
         return np.asarray(img)
 
     def get_mask(self, p: Path) -> np.ndarray:

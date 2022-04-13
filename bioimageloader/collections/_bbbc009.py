@@ -1,6 +1,6 @@
 from functools import cached_property
 from pathlib import Path
-from typing import Dict, List, Optional, Sequence, Union
+from typing import List, Optional
 
 import albumentations
 import cv2
@@ -9,8 +9,6 @@ import tifffile
 
 
 from ..base import MaskDataset
-from ..types import BundledPath
-from ..utils import bundle_list, stack_channels, stack_channels_to_rgb
 
 class BBBC009(MaskDataset):
     """Human red blood cells
@@ -29,18 +27,12 @@ class BBBC009(MaskDataset):
     num_samples : int, optional
         Useful when ``transforms`` is set. Define the total length of the
         dataset. If it is set, it overwrites ``__len__``.
-    grayscale : bool, default: False
-        Convert images to grayscale
-    grayscale_mode : {'cv2', 'equal', Sequence[float]}, default: 'cv2'
-        How to convert to grayscale. If set to 'cv2', it follows opencv
-        implementation. Else if set to 'equal', it sums up values along channel
-        axis, then divides it by the number of expected channels.
-        
+
     References
     ----------
     .. [1] https://bbbc.broadinstitute.org/BBBC009
-    
-    
+
+
     See Also
     --------
     MaskDataset : Super class
@@ -56,8 +48,6 @@ class BBBC009(MaskDataset):
         output: str = 'both',
         transforms: Optional[albumentations.Compose] = None,
         num_samples: Optional[int] = None,
-        grayscale: bool = False,  # optional
-        grayscale_mode: Union[str, Sequence[float]] = 'cv2',  # optional
         # specific to this dataset
         **kwargs
     ):
@@ -65,8 +55,6 @@ class BBBC009(MaskDataset):
         self._output = output
         self._transforms = transforms
         self._num_samples = num_samples
-        self._grayscale = grayscale   # optional
-        self._grayscale_mode = grayscale_mode  # optional
         # specific to this one here
 
     def get_image(self, p: Path) -> np.ndarray:
